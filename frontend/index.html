@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Commerce Intelligence | Enterprise Analytics Platform</title>
+  <meta name="description" content="Turn your e-commerce data into actionable decisions. Portfolio-grade E-Commerce Intelligence & Data Analytics Platform." />
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS & Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            dark: {
+              bg: '#0b0f19',
+              card: '#111827',
+              sidebar: '#0d1322',
+              border: '#1f2937',
+              hover: '#1e293b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      letter-spacing: -0.012em;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.45); }
+    
+    .heatmap-cell {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .heatmap-cell:hover {
+      transform: scale(1.08);
+      z-index: 20;
+      box-shadow: 0 8px 20px -4px rgba(0,0,0,0.3);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+    .pulse-badge {
+      animation: pulse-subtle 3s infinite ease-in-out;
+    }
+    .active-nav {
+      background-color: #4f46e5 !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0b0f19] dark:text-slate-100 antialiased min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <div class="flex h-screen overflow-hidden bg-slate-50 text-slate-900 dark:bg-[#0b0f19] dark:text-slate-100 font-sans">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-[#0d1322] border-r border-slate-200 dark:border-dark-border flex flex-col justify-between transition-transform duration-300 -translate-x-full md:relative md:translate-x-0 shadow-xl md:shadow-none">
+      <div>
+        <!-- Brand Header -->
+        <div class="h-16 px-6 flex items-center justify-between border-b border-slate-200 dark:border-dark-border">
+          <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('Overview')">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 font-bold text-base">
+              ⚡
+            </div>
+            <div>
+              <h1 class="font-bold text-sm leading-tight tracking-tight text-slate-900 dark:text-white">E-Commerce</h1>
+              <span class="text-[11px] font-medium text-indigo-600 dark:text-indigo-400">Intelligence Platform</span>
+            </div>
+          </div>
+          <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 hover:text-slate-600 dark:hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <!-- Navigation Items -->
+        <div class="px-3 py-4 space-y-5 overflow-y-auto max-h-[calc(100vh-140px)]">
+          <!-- Main Overview -->
+          <div>
+            <button id="nav-Overview" onclick="switchTab('Overview')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-semibold active-nav transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+              <span>Overview Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Analytics Group -->
+          <div>
+            <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Analytics</div>
+            <div class="space-y-1">
+              <button id="nav-Sales-Analytics" onclick="switchTab('Sales Analytics')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                <span>Sales Analytics</span>
+              </button>
+              <button id="nav-Customer-Analytics" onclick="switchTab('Customer Analytics')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span>Customer Analytics</span>
+              </button>
+              <button id="nav-Product-Analytics" onclick="switchTab('Product Analytics')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                <span>Product Analytics</span>
+              </button>
+              <button id="nav-Geographic-Analytics" onclick="switchTab('Geographic Analytics')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Geographic Analytics</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Operations -->
+          <div>
+            <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Operations</div>
+            <button id="nav-Orders" onclick="switchTab('Orders')" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+              <div class="flex items-center space-x-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span>Orders & Bookings</span>
+              </div>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono">50k+</span>
+            </button>
+          </div>
+
+          <!-- Intelligence & AI -->
+          <div>
+            <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Intelligence & AI</div>
+            <div class="space-y-1">
+              <button id="nav-Business-Insights" onclick="switchTab('Business Insights')" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <div class="flex items-center space-x-3">
+                  <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                  <span>Business Insights</span>
+                </div>
+                <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold bg-purple-500/20 text-purple-600 dark:text-purple-400">AI</span>
+              </button>
+              <button id="nav-Forecasting" onclick="switchTab('Forecasting')" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <div class="flex items-center space-x-3">
+                  <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                  <span>Forecasting</span>
+                </div>
+                <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">ML</span>
+              </button>
+              <button id="nav-Anomaly-Detection" onclick="switchTab('Anomaly Detection')" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+                <div class="flex items-center space-x-3">
+                  <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                  <span>Anomaly Alerts</span>
+                </div>
+                <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold bg-amber-500/20 text-amber-600 dark:text-amber-400">Live</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div>
+            <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Preferences</div>
+            <button id="nav-Settings" onclick="switchTab('Settings')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-hover hover:text-slate-900 dark:hover:text-slate-100 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span>Settings & Export</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Profile Card -->
+      <div class="p-3 border-t border-slate-200 dark:border-dark-border bg-slate-50/50 dark:bg-[#0b101c]">
+        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-dark-hover transition-colors cursor-pointer" onclick="switchTab('Settings')">
+          <div class="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-xs font-bold ring-2 ring-indigo-500/30">
+              NK
+            </div>
+            <div class="text-left">
+              <p class="text-xs font-bold text-slate-900 dark:text-white leading-none">Naveen Kumar</p>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Lead Data Analyst</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MOBILE BACKDROP -->
+    <div id="mobile-backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN VIEWPORT -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      
+      <!-- TOP NAVIGATION BAR -->
+      <header class="h-16 bg-white/90 dark:bg-[#0d1322]/90 backdrop-blur-md border-b border-slate-200 dark:border-dark-border px-4 md:px-8 flex items-center justify-between z-20 no-print">
+        <div class="flex items-center space-x-4">
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-dark-hover">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+
+          <!-- Spotlight Search Trigger -->
+          <div onclick="toggleCommandPalette()" class="hidden sm:flex items-center space-x-2 w-64 md:w-80 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-400 text-xs hover:border-indigo-500/50 cursor-pointer transition-all">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="flex-1 text-slate-500 dark:text-slate-400">Search analytics, SKUs, orders...</span>
+            <kbd class="px-1.5 py-0.5 text-[10px] font-mono rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-500">Ctrl K</kbd>
+          </div>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex items-center space-x-2 md:space-x-3">
+          
+          <!-- Date Range Selector -->
+          <select id="global-date-range" onchange="onFilterChange()" class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer">
+            <option value="Today">Today</option>
+            <option value="7 Days">Last 7 Days</option>
+            <option value="30 Days" selected>Last 30 Days</option>
+            <option value="90 Days">Last 90 Days</option>
+            <option value="12 Months">Last 12 Months</option>
+          </select>
+
+          <!-- Filter Drawer Trigger -->
+          <button onclick="toggleFilterDrawer()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+            <span class="hidden sm:inline">Filters</span>
+          </button>
+
+          <!-- Report PDF Button -->
+          <button onclick="window.print()" title="Print / PDF Report" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>Report</span>
+          </button>
+
+          <!-- CSV Export Button -->
+          <button onclick="exportCSV()" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/30 transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Export</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
+            <svg id="theme-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- DYNAMIC CONTENT CONTAINER -->
+      <main id="main-content" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6">
+        <!-- Rendered dynamically by JavaScript -->
+      </main>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE MODAL (CTRL + K) -->
+  <div id="command-palette" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-start justify-center pt-20 p-4" onclick="toggleCommandPalette()">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center space-x-3">
+        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input type="text" id="palette-search" placeholder="Search pages, products, customers..." oninput="handlePaletteSearch(this.value)" class="w-full bg-transparent text-sm text-slate-900 dark:text-white focus:outline-none" />
+        <kbd class="px-2 py-0.5 text-[10px] font-mono rounded bg-slate-100 dark:bg-slate-800 text-slate-500">ESC</kbd>
+      </div>
+      <div id="palette-results" class="p-3 max-h-80 overflow-y-auto space-y-1 text-xs">
+        <!-- Quick Links -->
+        <p class="px-3 py-1 text-[10px] font-bold uppercase text-slate-400">Navigation Pages</p>
+        <div onclick="switchTab('Overview'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Overview Dashboard</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+        <div onclick="switchTab('Sales Analytics'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Sales Analytics</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+        <div onclick="switchTab('Customer Analytics'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Customer Analytics (RFM)</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+        <div onclick="switchTab('Product Analytics'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Product Analytics (2x2 Matrix)</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+        <div onclick="switchTab('Orders'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Orders Operations</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+        <div onclick="switchTab('Forecasting'); toggleCommandPalette();" class="px-3 py-2 rounded-lg hover:bg-indigo-600 hover:text-white flex items-center justify-between cursor-pointer text-slate-700 dark:text-slate-200">
+          <span>Scikit-Learn Forecasting</span><span class="text-[10px] opacity-70">Go to tab →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER DRAWER -->
+  <div id="filter-drawer" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex justify-end" onclick="toggleFilterDrawer()">
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 h-full p-6 shadow-2xl border-l border-slate-200 dark:border-slate-800 overflow-y-auto flex flex-col justify-between" onclick="event.stopPropagation()">
+      <div class="space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+          <h3 class="font-bold text-base text-slate-900 dark:text-white">Global Analytics Filters</h3>
+          <button onclick="toggleFilterDrawer()" class="text-slate-400 hover:text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Product Category</label>
+          <select id="filter-category" class="w-full mt-1.5 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
+            <option value="All">All Categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home & Garden">Home & Garden</option>
+            <option value="Beauty">Beauty</option>
+            <option value="Sports">Sports</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Region -->
+        <div>
+          <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Geographic Region</label>
+          <select id="filter-region" class="w-full mt-1.5 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
+            <option value="All">All Regions</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Germany">Germany</option>
+            <option value="Canada">Canada</option>
+            <option value="India">India</option>
+            <option value="Australia">Australia</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-slate-200 dark:border-slate-800 flex space-x-3">
+        <button onclick="resetFilters()" class="flex-1 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300">
+          Reset Filters
+        </button>
+        <button onclick="applyFilters()" class="flex-1 py-2 rounded-lg bg-indigo-600 text-xs font-semibold text-white shadow-sm">
+          Apply & Recalculate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER MODAL -->
+  <div id="order-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeOrderModal()">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <span class="text-[10px] font-mono text-indigo-500 font-bold">Transaction Invoice</span>
+          <h3 id="modal-order-id" class="text-base font-bold text-slate-900 dark:text-white">ORD-100000</h3>
+        </div>
+        <button onclick="closeOrderModal()" class="text-slate-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div><p class="text-slate-400">Customer</p><p id="modal-customer" class="font-bold text-slate-900 dark:text-white">-</p></div>
+        <div><p class="text-slate-400">Date</p><p id="modal-date" class="font-mono text-slate-900 dark:text-white">-</p></div>
+        <div><p class="text-slate-400">Country</p><p id="modal-country" class="text-slate-900 dark:text-white">-</p></div>
+        <div><p class="text-slate-400">Payment</p><p id="modal-payment" class="text-slate-900 dark:text-white">-</p></div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-xs space-y-2">
+        <div class="flex justify-between">
+          <span id="modal-product" class="text-slate-700 dark:text-slate-200">-</span>
+          <span id="modal-amount" class="font-mono font-bold text-slate-900 dark:text-white">$0.00</span>
+        </div>
+        <div class="flex justify-between text-slate-400 text-[11px] pt-2 border-t border-slate-200 dark:border-slate-700">
+          <span>Estimated Profit Margin</span>
+          <span id="modal-profit" class="text-emerald-500 font-bold">$0.00</span>
+        </div>
+      </div>
+
+      <button onclick="closeOrderModal()" class="w-full py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold shadow-sm">
+        Close Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC ENGINE -->
+  <script>
+    let currentTab = 'Overview';
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    let revenueChart = null;
+    let categoryChart = null;
+
+    // Filter values
+    let activeCategory = 'All';
+    let activeRegion = 'All';
+    let activeDateRange = '30 Days';
+
+    // Forecast state
+    let simAdSpend = 1.0;
+    let simDiscount = 0;
+
+    // Core Data
+    const PRODUCTS = [
+      { id: 1, name: 'Wireless Noise-Cancelling Headphones', category: 'Electronics', price: 189.99, margin: 0.421, stock: 412, rating: 4.8, rev: 471365, units: 2481 },
+      { id: 2, name: 'Ultra-Wide 34" Curved Monitor', category: 'Electronics', price: 449.99, margin: 0.355, stock: 128, rating: 4.9, rev: 851381, units: 1892 },
+      { id: 3, name: 'Merino Wool Crewneck Sweater', category: 'Fashion', price: 88.00, margin: 0.636, stock: 540, rating: 4.7, rev: 274560, units: 3120 },
+      { id: 4, name: 'Dual-Motor Electric Standing Desk', category: 'Home & Garden', price: 499.00, margin: 0.479, stock: 89, rating: 4.8, rev: 469060, units: 940 },
+      { id: 5, name: 'Hyaluronic Acid Hydrating Serum', category: 'Beauty', price: 46.00, margin: 0.815, stock: 820, rating: 4.9, rev: 224940, units: 4890 },
+      { id: 6, name: 'Adjustable Quick-Select Dumbbells', category: 'Sports', price: 289.00, margin: 0.464, stock: 165, rating: 4.7, rev: 358360, units: 1240 },
+      { id: 7, name: 'Slim-Fit Stretch Denim Jeans', category: 'Fashion', price: 74.00, margin: 0.676, stock: 390, rating: 4.6, rev: 210900, units: 2850 },
+      { id: 8, name: 'Smart Ultrasonic Cool Mist Humidifier', category: 'Home & Garden', price: 68.00, margin: 0.588, stock: 295, rating: 4.5, rev: 116960, units: 1720 },
+      { id: 9, name: 'Smart Watch Series 9 GPS', category: 'Electronics', price: 329.99, margin: 0.364, stock: 210, rating: 4.8, rev: 544483, units: 1650 },
+      { id: 10, name: 'Botanical Restorative Facial Oil', category: 'Beauty', price: 64.00, margin: 0.812, stock: 450, rating: 4.9, rev: 134400, units: 2100 }
+    ];
+
+    const RFM_DATA = [
+      { name: "Champions", percentage: 24.2, count: "4,460", revenue: "$488,270", avgSpend: "$109.47", recency: "6 days", color: "#10b981", strategy: "Reward loyalty & early access" },
+      { name: "Loyal Customers", percentage: 31.0, count: "5,712", revenue: "$411,170", avgSpend: "$71.98", recency: "14 days", color: "#3b82f6", strategy: "Upsell premium SKUs & memberships" },
+      { name: "Potential Loyalists", percentage: 15.5, count: "2,856", revenue: "$179,890", avgSpend: "$62.98", recency: "22 days", color: "#8b5cf6", strategy: "Recommend cross-category bundles" },
+      { name: "New Customers", percentage: 12.8, count: "2,358", revenue: "$115,640", avgSpend: "$49.04", recency: "4 days", color: "#06b6d4", strategy: "Trigger onboarding & welcome offers" },
+      { name: "At Risk", percentage: 8.5, count: "1,566", revenue: "$64,250", avgSpend: "$41.02", recency: "54 days", color: "#f59e0b", strategy: "Send targeted win-back discount" },
+      { name: "Cannot Lose Them", percentage: 4.2, count: "774", revenue: "$21,840", avgSpend: "$28.21", recency: "92 days", color: "#ec4899", strategy: "Executive outreach & concierge check-in" },
+      { name: "Lost Customers", percentage: 3.8, count: "703", revenue: "$3,860", avgSpend: "$5.49", recency: "140 days", color: "#ef4444", strategy: "Periodic low-cost reactivation" }
+    ];
+
+    const COHORTS = [
+      { cohort: "2024-01", users: 1840, m0: 100, m1: 44.8, m2: 34.2, m3: 28.6, m4: 24.1, m5: 21.5 },
+      { cohort: "2024-02", users: 2010, m0: 100, m1: 46.2, m2: 35.8, m3: 30.1, m4: 25.4, m5: null },
+      { cohort: "2024-03", users: 2190, m0: 100, m1: 47.5, m2: 37.1, m3: 31.5, m4: null, m5: null },
+      { cohort: "2024-04", users: 2350, m0: 100, m1: 48.9, m2: 38.4, m3: null, m4: null, m5: null },
+      { cohort: "2024-05", users: 2520, m0: 100, m1: 50.1, m2: null, m3: null, m4: null, m5: null },
+      { cohort: "2024-06", users: 2680, m0: 100, m1: null, m2: null, m3: null, m4: null, m5: null }
+    ];
+
+    const ORDERS_LIST = Array.from({ length: 45 }, (_, i) => {
+      const oid = 100000 + (45 - i);
+      const names = ["James Smith", "Emma Johnson", "Oliver Williams", "Sophia Brown", "Liam Davis", "Ava Miller", "Arjun Patel", "Priya Sharma", "Lukas Weber", "Hannah Schmidt", "Aditya Rao", "Chloe Dupont"];
+      const countries = ["United States", "United Kingdom", "Germany", "Canada", "India", "Australia"];
+      const cats = ["Electronics", "Fashion", "Home & Garden", "Beauty", "Sports"];
+      const prods = ["Wireless Noise-Cancelling Headphones", "Ultra-Wide 34\" Curved Monitor", "Merino Wool Crewneck Sweater", "Dual-Motor Electric Standing Desk", "Hyaluronic Acid Hydrating Serum", "Adjustable Quick-Select Dumbbells"];
+      const statuses = ["Completed", "Processing", "Shipped", "Completed", "Cancelled", "Returned"];
+      const payments = ["Credit Card", "Apple Pay", "PayPal", "Stripe", "Klarna"];
+      
+      const prodName = prods[i % prods.length];
+      const category = cats[i % cats.length];
+      const amount = (49.99 + (i * 17.5) % 380).toFixed(2);
+      const profit = (amount * 0.38).toFixed(2);
+      
+      const d = new Date();
+      d.setDate(d.getDate() - Math.floor(i / 2));
+      const dateStr = d.toISOString().split('T')[0];
+
+      return {
+        id: `ORD-${oid}`,
+        customer_name: names[i % names.length],
+        country: countries[i % countries.length],
+        date: dateStr,
+        product: prodName,
+        category: category,
+        amount: parseFloat(amount),
+        profit: parseFloat(profit),
+        status: statuses[i % statuses.length],
+        payment: payments[i % payments.length]
+      };
+    });
+
+    // Theme Management
+    function applyTheme(theme) {
+      currentTheme = theme;
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      localStorage.setItem('theme', theme);
+    }
+    applyTheme(currentTheme);
+
+    function toggleTheme() {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+      renderCurrentPage();
+    }
+
+    function toggleMobileMenu() {
+      const sb = document.getElementById('sidebar');
+      const mb = document.getElementById('mobile-backdrop');
+      if (sb.classList.contains('-translate-x-full')) {
+        sb.classList.remove('-translate-x-full');
+        mb.classList.remove('hidden');
+      } else {
+        sb.classList.add('-translate-x-full');
+        mb.classList.add('hidden');
+      }
+    }
+
+    function toggleFilterDrawer() {
+      const fd = document.getElementById('filter-drawer');
+      fd.classList.toggle('hidden');
+    }
+
+    function toggleCommandPalette() {
+      const cp = document.getElementById('command-palette');
+      cp.classList.toggle('hidden');
+      if (!cp.classList.contains('hidden')) {
+        document.getElementById('palette-search').focus();
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-nav'));
+      const activeBtn = document.getElementById(`nav-${tab.replace(/\s+/g, '-')}`);
+      if (activeBtn) activeBtn.classList.add('active-nav');
+      
+      const sb = document.getElementById('sidebar');
+      const mb = document.getElementById('mobile-backdrop');
+      sb.classList.add('-translate-x-full');
+      mb.classList.add('hidden');
+
+      renderCurrentPage();
+    }
+
+    function onFilterChange() {
+      activeDateRange = document.getElementById('global-date-range').value;
+      renderCurrentPage();
+    }
+
+    function applyFilters() {
+      activeCategory = document.getElementById('filter-category').value;
+      activeRegion = document.getElementById('filter-region').value;
+      toggleFilterDrawer();
+      renderCurrentPage();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-category').value = 'All';
+      document.getElementById('filter-region').value = 'All';
+      activeCategory = 'All';
+      activeRegion = 'All';
+      toggleFilterDrawer();
+      renderCurrentPage();
+    }
+
+    function openOrderModal(orderId) {
+      const order = ORDERS_LIST.find(o => o.id === orderId);
+      if (!order) return;
+      document.getElementById('modal-order-id').innerText = order.id;
+      document.getElementById('modal-customer').innerText = order.customer_name;
+      document.getElementById('modal-date').innerText = order.date;
+      document.getElementById('modal-country').innerText = order.country;
+      document.getElementById('modal-payment').innerText = order.payment;
+      document.getElementById('modal-product').innerText = order.product;
+      document.getElementById('modal-amount').innerText = `$${order.amount.toFixed(2)}`;
+      document.getElementById('modal-profit').innerText = `$${order.profit.toFixed(2)}`;
+      document.getElementById('order-modal').classList.remove('hidden');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.add('hidden');
+    }
+
+    function exportCSV() {
+      const headers = ["Order ID", "Customer", "Country", "Date", "Product", "Category", "Amount", "Profit", "Status", "Payment"];
+      const rows = ORDERS_LIST.map(o => [o.id, `"${o.customer_name}"`, `"${o.country}"`, o.date, `"${o.product}"`, o.category, o.amount, o.profit, o.status, o.payment]);
+      const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const uri = encodeURI(csv);
+      const link = document.createElement("a");
+      link.setAttribute("href", uri);
+      link.setAttribute("download", `ecommerce_intelligence_${activeDateRange.replace(' ', '_')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        toggleCommandPalette();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('command-palette').classList.add('hidden');
+        document.getElementById('filter-drawer').classList.add('hidden');
+        document.getElementById('order-modal').classList.add('hidden');
+      }
+    });
+
+    // ----------------------------------------------------
+    // PAGE RENDERERS
+    // ----------------------------------------------------
+    function renderCurrentPage() {
+      const container = document.getElementById('main-content');
+      
+      let mult = 1.0;
+      if (activeDateRange === 'Today') mult = 0.033;
+      else if (activeDateRange === '7 Days') mult = 0.233;
+      else if (activeDateRange === '90 Days') mult = 2.95;
+      else if (activeDateRange === '12 Months') mult = 11.8;
+
+      if (activeCategory !== 'All') mult *= 0.35;
+      if (activeRegion !== 'All') mult *= 0.45;
+
+      const revVal = Math.round(1284920 * mult);
+      const ordVal = Math.round(24892 * mult);
+      const aovVal = ordVal > 0 ? (revVal / ordVal).toFixed(2) : '51.62';
+      const custVal = Math.round(18429 * mult);
+      const profitVal = Math.round(revVal * 0.3333);
+
+      const headerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Good morning, Naveen</p>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">${currentTab}</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Turn your e-commerce data into actionable decisions.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              Range: <strong class="text-indigo-600 dark:text-indigo-400">${activeDateRange}</strong>
+            </span>
+            ${activeCategory !== 'All' ? `<span class="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">Category: ${activeCategory}</span>` : ''}
+            ${activeRegion !== 'All' ? `<span class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-[11px] font-medium text-purple-600 dark:text-purple-400">Region: ${activeRegion}</span>` : ''}
+          </div>
+        </div>
+      `;
+
+      if (currentTab === 'Overview') {
+        container.innerHTML = `
+          ${headerHTML}
+
+          <!-- 6 Primary KPI Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Revenue</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">$${revVal.toLocaleString()}</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 18.4% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Orders</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">${ordVal.toLocaleString()}</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 12.7% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Average Order Value</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">$${aovVal}</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 5.2% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Active Customers</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">${custVal.toLocaleString()}</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 9.8% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Conversion Rate</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">4.82%</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 0.64% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4 shadow-sm">
+              <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Net Profit</span>
+              <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white mt-1">$${profitVal.toLocaleString()}</h3>
+              <p class="text-[11px] font-semibold text-emerald-500 mt-1">↑ 21.6% <span class="text-[10px] text-slate-400 font-normal">vs prev</span></p>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                  <h3 class="font-bold text-sm text-slate-900 dark:text-white">Revenue & Profit Trajectory</h3>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400">Time-series tracking with previous period baseline comparison</p>
+                </div>
+              </div>
+              <div class="h-72 mt-4">
+                <canvas id="revenue-chart-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h3 class="font-bold text-sm text-slate-900 dark:text-white">Sales by Category</h3>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">6 Verticals</span>
+                </div>
+                <div class="h-44 mt-3 relative flex items-center justify-center">
+                  <canvas id="category-chart-canvas"></canvas>
+                </div>
+              </div>
+              <div class="space-y-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                <div class="flex justify-between"><span>🔵 Electronics</span><strong class="font-mono">38.5%</strong></div>
+                <div class="flex justify-between"><span>🟣 Fashion</span><strong class="font-mono">24.2%</strong></div>
+                <div class="flex justify-between"><span>🟢 Home & Garden</span><strong class="font-mono">18.1%</strong></div>
+                <div class="flex justify-between"><span>🟪 Beauty</span><strong class="font-mono">10.4%</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Products & AI Insights -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Top Performing Products</h3>
+                <button onclick="switchTab('Product Analytics')" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">View All →</button>
+              </div>
+              <div class="overflow-x-auto mt-3">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px]">
+                      <th class="py-2.5">Product</th>
+                      <th class="py-2.5">Category</th>
+                      <th class="py-2.5 text-right">Revenue</th>
+                      <th class="py-2.5 text-right">Units</th>
+                      <th class="py-2.5 text-right">Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    ${PRODUCTS.slice(0, 5).map(p => `
+                      <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                        <td class="py-3 font-semibold text-slate-900 dark:text-white">${p.name}</td>
+                        <td class="py-3"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px]">${p.category}</span></td>
+                        <td class="py-3 text-right font-mono font-bold text-slate-900 dark:text-white">$${p.rev.toLocaleString()}</td>
+                        <td class="py-3 text-right font-mono text-slate-400">${p.units.toLocaleString()}</td>
+                        <td class="py-3 text-right font-mono font-semibold text-emerald-500">${(p.margin*100).toFixed(1)}%</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm space-y-3">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="font-bold text-sm text-slate-900 dark:text-white">AI Business Insights</h3>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400 font-mono">Live ML</span>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+                <span class="text-[9px] uppercase px-1.5 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-500">Positive</span>
+                <h4 class="font-bold text-slate-900 dark:text-white">Strong Electronics Momentum</h4>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">Electronics revenue up +27% YoY driven by Studio Mics and Monitors.</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+                <span class="text-[9px] uppercase px-1.5 py-0.5 rounded font-bold bg-indigo-500/20 text-indigo-400">Opportunity</span>
+                <h4 class="font-bold text-slate-900 dark:text-white">Customer Retention Lift</h4>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">Returning customers have 42% higher AOV than first-time visitors.</p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        initCharts(mult);
+      } 
+      else if (currentTab === 'Sales Analytics') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-xs text-slate-400">Total Gross Volume</span>
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">$${revVal.toLocaleString()}</h3>
+              <p class="text-xs text-emerald-500 font-semibold mt-1">↑ 18.4% YoY</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-xs text-slate-400">Conversion Rate</span>
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">4.82%</h3>
+              <p class="text-xs text-emerald-500 font-semibold mt-1">↑ 0.64% Lift</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-xs text-slate-400">Blended AOV</span>
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">$${aovVal}</h3>
+              <p class="text-xs text-emerald-500 font-semibold mt-1">↑ 5.2% vs target</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-xs text-slate-400">Net Profit Margin</span>
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">33.3%</h3>
+              <p class="text-xs text-indigo-400 font-semibold mt-1">Healthy Run-rate</p>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">Sales Acquisition by Channel</h3>
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px]">
+                  <th class="py-2.5">Channel</th>
+                  <th class="py-2.5 text-right">Revenue Share</th>
+                  <th class="py-2.5 text-right">Orders</th>
+                  <th class="py-2.5 text-right">Growth</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40"><td class="py-3 font-semibold">Direct Web</td><td class="py-3 text-right font-mono font-bold">$411,174 (32%)</td><td class="py-3 text-right font-mono">7,965</td><td class="py-3 text-right text-emerald-500">+14.2%</td></tr>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40"><td class="py-3 font-semibold">Organic Search</td><td class="py-3 text-right font-mono font-bold">$334,079 (26%)</td><td class="py-3 text-right font-mono">6,472</td><td class="py-3 text-right text-emerald-500">+18.5%</td></tr>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40"><td class="py-3 font-semibold">Google Ads</td><td class="py-3 text-right font-mono font-bold">$256,984 (20%)</td><td class="py-3 text-right font-mono">4,978</td><td class="py-3 text-right text-emerald-500">+11.4%</td></tr>
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40"><td class="py-3 font-semibold">Paid Social</td><td class="py-3 text-right font-mono font-bold">$179,888 (14%)</td><td class="py-3 text-right font-mono">3,485</td><td class="py-3 text-right text-emerald-500">+8.1%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Customer Analytics') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-[11px] text-slate-400">Total Customers</span>
+              <h4 class="text-xl font-bold text-slate-900 dark:text-white mt-1">18,429</h4>
+              <p class="text-[10px] text-emerald-500 mt-0.5">↑ 9.8% YoY</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-[11px] text-slate-400">Repeat Purchase Rate</span>
+              <h4 class="text-xl font-bold text-slate-900 dark:text-white mt-1">36.8%</h4>
+              <p class="text-[10px] text-emerald-500 mt-0.5">↑ 3.2% vs avg</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-[11px] text-slate-400">Customer Lifetime Value</span>
+              <h4 class="text-xl font-bold text-slate-900 dark:text-white mt-1">$425.80</h4>
+              <p class="text-[10px] text-indigo-400 mt-0.5">8.8x CAC Ratio</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-[11px] text-slate-400">Blended CAC</span>
+              <h4 class="text-xl font-bold text-slate-900 dark:text-white mt-1">$48.50</h4>
+              <p class="text-[10px] text-emerald-500 mt-0.5">↓ 4.1% Cost</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-4">
+              <span class="text-[11px] text-slate-400">Net Promoter Score</span>
+              <h4 class="text-xl font-bold text-slate-900 dark:text-white mt-1">+62 NPS</h4>
+              <p class="text-[10px] text-emerald-500 mt-0.5">Top-quartile</p>
+            </div>
+          </div>
+
+          <!-- RFM Segmentation -->
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">RFM Customer Segmentation (Recency, Frequency, Monetary)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              ${RFM_DATA.map(r => `
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0c1220]">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${r.color}"></span>
+                      <h4 class="text-xs font-bold text-slate-900 dark:text-white">${r.name}</h4>
+                    </div>
+                    <span class="text-xs font-mono font-bold">${r.percentage}%</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 mt-3 text-[11px] py-2 border-y border-slate-200/60 dark:border-slate-800">
+                    <div><p class="text-slate-400">Users</p><p class="font-bold">${r.count}</p></div>
+                    <div><p class="text-slate-400">Spend</p><p class="font-bold">${r.avgSpend}</p></div>
+                    <div><p class="text-slate-400">Recency</p><p class="font-bold">${r.recency}</p></div>
+                  </div>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-2"><strong>Strategy:</strong> ${r.strategy}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Cohort Retention Heatmap -->
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">Customer Retention Cohort Heatmap</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-center text-xs">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400">
+                    <th class="py-2 text-left">Cohort</th><th class="py-2">Users</th><th>M0</th><th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  ${COHORTS.map(c => `
+                    <tr>
+                      <td class="py-3 text-left font-mono font-bold">${c.cohort}</td>
+                      <td class="py-3 font-mono text-slate-400">${c.users.toLocaleString()}</td>
+                      ${[c.m0, c.m1, c.m2, c.m3, c.m4, c.m5].map(v => `
+                        <td class="p-1">
+                          ${v !== null ? `<div class="heatmap-cell py-1.5 rounded text-[11px] font-mono font-bold" style="background-color: rgba(99, 102, 241, ${v/100}); color: ${v > 40 ? '#fff' : '#cbd5e1'}">${v}%</div>` : '<span class="text-slate-500">-</span>'}
+                        </td>
+                      `).join('')}
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Product Analytics') {
+        container.innerHTML = `
+          ${headerHTML}
+          <!-- 2x2 Performance Matrix -->
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">Product Performance 2x2 Matrix</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
+                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">★ Stars (High Revenue / High Margin)</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">Merino Wool Sweater (63.6% margin), Hyaluronic Serum (81.5% margin), Carbon Pickleball Paddle (64.7% margin).</p>
+              </div>
+              <div class="p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
+                <span class="text-xs font-bold text-blue-600 dark:text-blue-400">⚡ Volume Drivers (High Revenue / Low Margin)</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">Ultra-Wide 34" Monitor ($851k Rev, 35.5% margin), Wireless Headphones ($471k Rev, 42.1% margin).</p>
+              </div>
+              <div class="p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
+                <span class="text-xs font-bold text-purple-600 dark:text-purple-400">💎 Niche Opps (Low Revenue / High Margin)</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">Botanical Facial Oil ($134k Rev, 81.2% margin), Dotted Executive Journal ($45k Rev, 77.1% margin).</p>
+              </div>
+              <div class="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+                <span class="text-xs font-bold text-amber-600 dark:text-amber-400">⚠ Review / Phased Out (Low Rev / Low Margin)</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">Basic USB Cable Hubs & Entry Mousepads with sub-18% margins.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Catalog Table -->
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">All Catalog SKUs Performance</h3>
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px]">
+                  <th class="py-2.5">SKU Name</th><th>Category</th><th class="text-right">Price</th><th class="text-right">Margin %</th><th class="text-right">Stock</th><th class="text-right">Rating</th><th class="text-right">Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                ${PRODUCTS.map(p => `
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td class="py-3 font-semibold text-slate-900 dark:text-white">${p.name}</td>
+                    <td class="py-3"><span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px]">${p.category}</span></td>
+                    <td class="py-3 text-right font-mono">$${p.price.toFixed(2)}</td>
+                    <td class="py-3 text-right font-mono font-bold text-emerald-500">${(p.margin*100).toFixed(1)}%</td>
+                    <td class="py-3 text-right font-mono">${p.stock} units</td>
+                    <td class="py-3 text-right font-mono">⭐ ${p.rating}</td>
+                    <td class="py-3 text-right font-mono font-bold">$${p.rev.toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Geographic Analytics') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3">Global International Revenue Distribution</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              ${[
+                { country: "United States", code: "US", revenue: 578214, percentage: 45.0, orders: 11201, aov: 51.62, growth: "+19.4%" },
+                { country: "United Kingdom", code: "UK", revenue: 205587, percentage: 16.0, orders: 3982, aov: 51.63, growth: "+14.2%" },
+                { country: "Germany", code: "DE", revenue: 154190, percentage: 12.0, orders: 2987, aov: 51.62, growth: "+16.8%" },
+                { country: "Canada", code: "CA", revenue: 128492, percentage: 10.0, orders: 2489, aov: 51.62, growth: "+11.5%" },
+                { country: "India", code: "IN", revenue: 115643, percentage: 9.0, orders: 2240, aov: 51.63, growth: "+26.3%" },
+                { country: "Australia", code: "AU", revenue: 102794, percentage: 8.0, orders: 1993, aov: 51.58, growth: "+12.1%" }
+              ].map(r => `
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0c1220]">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-900 dark:text-white">${r.country}</span>
+                    <span class="text-xs font-mono font-bold text-indigo-500">${r.percentage}% Share</span>
+                  </div>
+                  <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-2">$${r.revenue.toLocaleString()}</h4>
+                  <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                    <span>${r.orders.toLocaleString()} orders</span>
+                    <span>AOV: $${r.aov}</span>
+                    <span class="font-semibold text-emerald-500">${r.growth}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Orders') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">All Orders & Transaction Log</h3>
+              <button onclick="exportCSV()" class="text-xs px-3 py-1 bg-indigo-600 text-white rounded-lg font-semibold">Download CSV</button>
+            </div>
+            <div class="overflow-x-auto mt-3">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 uppercase text-[10px]">
+                    <th class="py-2.5">Order ID</th><th>Customer</th><th>Country</th><th>Date</th><th>Product</th><th class="text-right">Amount</th><th class="text-right">Profit</th><th class="text-center">Status</th><th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  ${ORDERS_LIST.map(o => `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                      <td class="py-3 font-mono font-bold text-indigo-500">${o.id}</td>
+                      <td class="py-3 font-medium text-slate-900 dark:text-white">${o.customer_name}</td>
+                      <td class="py-3 text-slate-500">${o.country}</td>
+                      <td class="py-3 font-mono text-slate-400">${o.date}</td>
+                      <td class="py-3 text-slate-700 dark:text-slate-300 truncate max-w-[180px]">${o.product}</td>
+                      <td class="py-3 text-right font-mono font-bold text-slate-900 dark:text-white">$${o.amount.toFixed(2)}</td>
+                      <td class="py-3 text-right font-mono text-emerald-500">$${o.profit.toFixed(2)}</td>
+                      <td class="py-3 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${o.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-500' : (o.status === 'Processing' ? 'bg-blue-500/20 text-blue-400' : (o.status === 'Shipped' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-rose-500/20 text-rose-400'))}">
+                          ${o.status}
+                        </span>
+                      </td>
+                      <td class="py-3 text-center">
+                        <button onclick="openOrderModal('${o.id}')" class="text-[11px] text-indigo-500 hover:underline font-semibold">View</button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Business Insights') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-card space-y-2">
+              <span class="text-[10px] uppercase font-extrabold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500">Positive</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Revenue Growth Velocity</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300">Revenue grew 18.4% this period. Technology catalog drove 38.5% of gross volume.</p>
+              <p class="text-[11px] text-indigo-400 pt-2 border-t border-slate-100 dark:border-slate-800"><strong>Recommendation:</strong> Scale paid budget on Ultra-Wide Monitors & Studio Microphones.</p>
+            </div>
+            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-card space-y-2">
+              <span class="text-[10px] uppercase font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-500">Warning</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Headphones Margin Compression</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300">Wireless Noise-Cancelling Headphones generated $471k but margin declined from 42% to 34.6%.</p>
+              <p class="text-[11px] text-indigo-400 pt-2 border-t border-slate-100 dark:border-slate-800"><strong>Recommendation:</strong> Review supplier tier contract and cap discount stacking.</p>
+            </div>
+            <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-card space-y-2">
+              <span class="text-[10px] uppercase font-extrabold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400">Opportunity</span>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Retention Multiplier</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-300">Returning customers have an average spend of $109.47 vs $49.04 for new visitors.</p>
+              <p class="text-[11px] text-indigo-400 pt-2 border-t border-slate-100 dark:border-slate-800"><strong>Recommendation:</strong> Create dedicated VIP VIP early access drops.</p>
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Forecasting') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Scikit-Learn Multi-variate Sales Forecast</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#0c1220] border border-slate-200 dark:border-slate-800">
+                <span class="text-xs text-slate-400">Projected 30-Day Revenue</span>
+                <h4 id="proj-rev" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">$${Math.round(1284920 * simAdSpend * (1 - simDiscount*0.01)).toLocaleString()}</h4>
+                <p class="text-[11px] text-slate-400 mt-1">95% Confidence Band: $1.15M - $1.42M</p>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#0c1220] border border-slate-200 dark:border-slate-800">
+                <span class="text-xs text-slate-400">Projected Order Volume</span>
+                <h4 id="proj-ord" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">${Math.round(24892 * simAdSpend).toLocaleString()} orders</h4>
+                <p class="text-[11px] text-slate-400 mt-1">Ridge Regression Time Series</p>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#0c1220] border border-slate-200 dark:border-slate-800">
+                <span class="text-xs text-slate-400">Model Accuracy Metric</span>
+                <h4 class="text-lg font-bold text-slate-900 dark:text-white mt-1">0.942 R² Score</h4>
+                <p class="text-[11px] text-emerald-500 mt-1">Tested on 50k+ dataset</p>
+              </div>
+            </div>
+
+            <!-- Simulator Controls -->
+            <div class="mt-4 p-4 rounded-xl border border-indigo-500/30 bg-indigo-500/5 space-y-4">
+              <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase">Interactive Scenario Simulator</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span>Paid Ad Spend Budget:</span>
+                    <span id="ad-spend-val" class="font-mono font-bold text-indigo-500">+${Math.round((simAdSpend-1)*100)}%</span>
+                  </div>
+                  <input type="range" min="0.8" max="1.5" step="0.05" value="${simAdSpend}" oninput="updateSimulator(parseFloat(this.value), simDiscount)" class="w-full accent-indigo-500" />
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span>Storewide Promo Discount:</span>
+                    <span id="promo-val" class="font-mono font-bold text-purple-500">${simDiscount}%</span>
+                  </div>
+                  <input type="range" min="0" max="25" step="5" value="${simDiscount}" oninput="updateSimulator(simAdSpend, parseInt(this.value))" class="w-full accent-purple-500" />
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Anomaly Detection') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Real-Time Anomaly Detection Engine (Z-Score > 2.0)</h3>
+            <div class="space-y-3">
+              <div class="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5 flex items-start space-x-3">
+                <div class="flex-1">
+                  <div class="flex justify-between"><h4 class="text-xs font-bold text-rose-500">Critical: Sudden Revenue Drop on Aug 12</h4><span class="text-[10px] font-mono font-bold text-rose-500">Z: -2.8</span></div>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Revenue dropped 31% below 14-day rolling baseline during checkout server latency.</p>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 flex items-start space-x-3">
+                <div class="flex-1">
+                  <div class="flex justify-between"><h4 class="text-xs font-bold text-emerald-500">Opportunity: Viral Order Surge</h4><span class="text-[10px] font-mono font-bold text-emerald-500">Z: +2.4</span></div>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Activewear Joggers recorded +64% order acceleration following TikTok influencer feature.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      else if (currentTab === 'Settings') {
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Platform Settings & Data Exports</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                <p class="font-bold text-slate-900 dark:text-white">Active Analyst Profile</p>
+                <p class="text-slate-400 mt-1">Naveen Kumar (Lead Data Analyst)</p>
+                <p class="text-[11px] text-indigo-400 mt-0.5">naveen.kumar@company.internal</p>
+              </div>
+              <div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+                <p class="font-bold text-slate-900 dark:text-white">Database Engine</p>
+                <p class="text-slate-400 mt-1">SQLite / PostgreSQL + FastAPI Server</p>
+                <p class="text-[11px] text-emerald-500 mt-0.5">50,000+ Records Indexed</p>
+              </div>
+            </div>
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex space-x-3">
+              <button onclick="exportCSV()" class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-semibold">Export CSV</button>
+              <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold">Print Report</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function updateSimulator(adSpend, discount) {
+      simAdSpend = adSpend;
+      simDiscount = discount;
+      document.getElementById('ad-spend-val').innerText = `+${Math.round((adSpend-1)*100)}%`;
+      document.getElementById('promo-val').innerText = `${discount}%`;
+      const projRev = Math.round(1284920 * adSpend * (1 - discount*0.01));
+      const projOrd = Math.round(24892 * adSpend);
+      document.getElementById('proj-rev').innerText = `$${projRev.toLocaleString()}`;
+      document.getElementById('proj-ord').innerText = `${projOrd.toLocaleString()} orders`;
+    }
+
+    function initCharts(mult) {
+      const isDark = currentTheme === 'dark';
+      
+      const revCanvas = document.getElementById('revenue-chart-canvas');
+      if (revCanvas) {
+        if (revenueChart) revenueChart.destroy();
+        revenueChart = new Chart(revCanvas.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['May 1', 'May 5', 'May 9', 'May 13', 'May 17', 'May 21', 'May 25', 'May 29', 'May 31'],
+            datasets: [
+              {
+                label: 'Current Period Revenue ($)',
+                data: [38, 45, 52, 58, 64, 71, 68, 79, 88].map(v => Math.round(v * mult * 1000)),
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.12)',
+                fill: true,
+                tension: 0.38,
+                borderWidth: 2.5
+              },
+              {
+                label: 'Previous Period Baseline',
+                data: [32, 38, 44, 49, 53, 59, 58, 66, 74].map(v => Math.round(v * mult * 1000)),
+                borderColor: isDark ? '#475569' : '#cbd5e1',
+                borderDash: [5, 5],
+                borderWidth: 1.8,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: isDark ? 'rgba(51, 65, 85, 0.25)' : 'rgba(226, 232, 240, 0.6)' } },
+              y: { grid: { color: isDark ? 'rgba(51, 65, 85, 0.25)' : 'rgba(226, 232, 240, 0.6)' } }
+            }
+          }
+        });
+      }
+
+      const catCanvas = document.getElementById('category-chart-canvas');
+      if (catCanvas) {
+        if (categoryChart) categoryChart.destroy();
+        categoryChart = new Chart(catCanvas.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Electronics', 'Fashion', 'Home & Garden', 'Beauty', 'Sports', 'Other'],
+            datasets: [{
+              data: [38.5, 24.2, 18.1, 10.4, 6.2, 2.6],
+              backgroundColor: ['#3b82f6', '#ec4899', '#10b981', '#8b5cf6', '#f59e0b', '#64748b'],
+              borderWidth: 2,
+              borderColor: isDark ? '#111827' : '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+    }
+
+    // Initial render
+    renderCurrentPage();
+  </script>
+</body>
+</html>
