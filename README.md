@@ -1,91 +1,88 @@
-# ⚡ E-Commerce Intelligence Platform
+# 🛒 E-Commerce Intelligence
 
-> **Turn your e-commerce data into actionable decisions.**
+<p align="center">
+  <img src="https://img.shields.io/badge/E--Commerce-Intelligence-6366f1?style=for-the-badge&logo=shopify&logoColor=white" alt="E-Commerce Intelligence"/>
+  <img src="https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite"/>
+  <img src="https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-UI-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"/>
+</p>
 
-A portfolio-grade, full-stack **E-Commerce Intelligence & Data Analytics Platform** featuring **FastAPI**, **Pandas**, **NumPy**, **Scikit-Learn**, and a modern **React 18 SaaS Dashboard** inspired by Linear, Stripe, and Vercel design principles.
+<p align="center">
+  <strong>Turn E-Commerce Data Into Actionable Business Intelligence.</strong>
+</p>
 
----
+<p align="center">
+  An end-to-end analytics platform for revenue intelligence, customer segmentation,
+  product analytics, cohort analysis, anomaly detection, and sales forecasting.
+</p>
 
-## 🌟 Key Capabilities & Features
-
-- **Executive Overview Dashboard**: 6 core KPIs (Total Revenue, Orders, AOV, Active Customers, Conversion Rate, Net Profit) with sparklines, interactive period-over-period comparison charts, and category volume splits.
-- **RFM Customer Segmentation**: True Recency, Frequency, and Monetary quintile calculations (1–5) grouping customers into 7 actionable cohorts (*Champions, Loyal Customers, Potential Loyalists, New Customers, At Risk, Cannot Lose Them, Lost Customers*).
-- **Customer Retention Cohort Heatmap**: Tracks retention decay from Month 0 through Month 5+ across monthly acquisition cohorts.
-- **Scikit-Learn Time Series Forecasting**: Multi-variate Ridge regression models with 95% statistical confidence bounds and an interactive scenario simulator (ad spend multiplier & promo discount).
-- **Statistical Anomaly Detection**: Real-time Z-score & IQR deviation analysis detecting revenue dips, order spikes, and refund abnormalities.
-- **Product Performance 2x2 Matrix**: BCG-style classification matrix segmenting products into *Stars*, *Volume Drivers*, *Niche Opportunities*, and *Phased Out items*.
-- **Geographic Analytics**: Country-level revenue distribution across US, UK, Germany, Canada, India, and Australia.
-- **Order Operations**: Searchable, sortable, paginated order book with interactive slide-over transaction invoice drawer.
-- **AI-Style Business Insights**: Dynamic recommendations categorized by severity (*Positive, Warning, Critical, Opportunity*) with root causes and execution strategies.
-- **Spotlight Command Palette (`Ctrl + K`)**: Keyboard-driven quick search for products, customers, and navigation routes.
-- **Data Export & Reporting**: Instant CSV export and printable executive performance reports.
-- **Theme Support**: Seamless Dark & Light themes with persistent state.
-
----
-
-## 🏗️ Architecture
-
-```
-ecommerce-intelligence/
-├── backend/
-│   ├── app/
-│   │   ├── api/router.py          # FastAPI REST endpoints
-│   │   ├── core/config.py         # Config & CORS settings
-│   │   ├── models/database.py     # SQLAlchemy models & SQLite/Postgres connection
-│   │   ├── schemas/analytics.py   # Pydantic V2 response models
-│   │   └── services/data_service.py # Analytics aggregation service
-│   ├── analytics/
-│   │   ├── rfm.py                 # RFM quintile segmentation engine
-│   │   ├── cohort.py              # Cohort retention matrix calculator
-│   │   ├── forecasting.py         # Scikit-learn Ridge forecast model
-│   │   └── anomaly.py             # Z-score anomaly detector
-│   ├── main.py                    # Server entry point
-│   └── requirements.txt
-├── data/
-│   ├── dataset_generator.py       # High-speed synthetic generator (50k+ orders)
-│   └── schema.sql                 # SQL DDL schemas
-├── frontend/
-│   └── index.html                 # Production React 18 SPA dashboard
-├── docs/
-│   ├── ARCHITECTURE.md            # Technical architecture specification
-│   ├── API_REFERENCE.md           # API endpoints documentation
-│   └── PORTFOLIO_GUIDE.md         # Interview & talking points guide
-├── .env.example
-├── .gitignore
-└── README.md
-```
+<p align="center">
+  <a href="https://naveenkumar2028.github.io/ecommerce-intelligence/">
+    <img src="https://img.shields.io/badge/🚀_LIVE_DEMO-Open_Dashboard-22c55e?style=for-the-badge" alt="Live Demo"/>
+  </a>
+  &nbsp;
+  <a href="https://github.com/Naveenkumar2028/ecommerce-intelligence">
+    <img src="https://img.shields.io/badge/💻_SOURCE_CODE-GitHub-181717?style=for-the-badge&logo=github" alt="GitHub"/>
+  </a>
+</p>
 
 ---
 
-## 🚀 Quickstart & Running Locally
+## 🌐 Live Demo
 
-### 1. Prerequisites
-- Python 3.10+ installed
+### 🚀 [Open E-Commerce Intelligence Dashboard](https://naveenkumar2028.github.io/ecommerce-intelligence/)
 
-### 2. Install Dependencies
-```bash
-pip install -r backend/requirements.txt
-```
+Explore the deployed analytics dashboard and discover how transactional data can be transformed into meaningful business insights.
 
-### 3. Generate 50,000+ Orders Dataset (Takes ~2 seconds)
-```bash
-python data/dataset_generator.py
-```
-
-### 4. Start the Application Server
-```bash
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-Open your browser at:
-**[http://localhost:8000](http://localhost:8000)** (or `http://127.0.0.1:8000`)
+> **Architecture Note:** The frontend is deployed using GitHub Pages. The FastAPI backend is designed to run separately as an API service.
 
 ---
 
-## 📊 Tech Stack
+# 🎯 Overview
 
-- **Backend**: Python, FastAPI, Uvicorn, SQLAlchemy, Pydantic
-- **Data & ML**: Pandas, NumPy, Scikit-Learn (Ridge regression, Z-score models)
-- **Database**: SQLite (built-in) / PostgreSQL (production ready)
-- **Frontend**: React 18, Tailwind CSS, Chart.js, Lucide Icons, Modern CSS variables
-- **Design System**: Dark Modern SaaS theme + Light theme support, accessible typography (Plus Jakarta Sans)
+**E-Commerce Intelligence** is a full-stack business analytics platform designed to transform raw e-commerce transaction data into actionable insights.
+
+The platform focuses on answering three important business questions:
+
+> **What is happening?**  
+> **Why is it happening?**  
+> **What should we do next?**
+
+Instead of simply displaying charts, the system combines multiple analytical techniques to understand:
+
+- 💰 Revenue performance
+- 📦 Product performance
+- 👥 Customer behavior
+- 🎯 Customer value
+- 🔄 Customer retention
+- 📈 Sales trends
+- 🔮 Future sales
+- 🚨 Unusual business activity
+- 📊 Business KPIs
+
+### Core Philosophy
+
+```text
+                 RAW DATA
+                    │
+                    ▼
+            DATA PROCESSING
+                    │
+                    ▼
+               ANALYTICS
+                    │
+          ┌─────────┼─────────┐
+          ▼         ▼         ▼
+        RFM      COHORT    FORECAST
+          │         │         │
+          └─────────┼─────────┘
+                    ▼
+          ANOMALY DETECTION
+                    │
+                    ▼
+           BUSINESS INSIGHTS
+                    │
+                    ▼
+          BETTER DECISIONS
