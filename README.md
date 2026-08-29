@@ -26,6 +26,17 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/Naveenkumar2028/ecommerce-intelligence/stargazers">
+    <img src="https://img.shields.io/github/stars/Naveenkumar2028/ecommerce-intelligence?style=for-the-badge&logo=github&label=Stars"/>
+  </a>
+  <a href="https://github.com/Naveenkumar2028/ecommerce-intelligence/network/members">
+    <img src="https://img.shields.io/github/forks/Naveenkumar2028/ecommerce-intelligence?style=for-the-badge&logo=github&label=Forks"/>
+  </a>
+</p>
+
+> ⭐ **If you find this project useful or interesting, consider giving it a star.** It helps the project reach other developers and data-analytics learners.
+
 ---
 
 ## 🎯 The Business Problem
