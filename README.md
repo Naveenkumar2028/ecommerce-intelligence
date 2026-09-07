@@ -266,6 +266,34 @@ and the health endpoint is:
 http://localhost:8000/health
 ```
 
+## 5. Run a quick smoke test
+
+Use the health endpoint to verify that the API process started correctly before opening the dashboard:
+
+### Windows PowerShell
+
+```powershell
+Invoke-RestMethod http://localhost:8000/health
+```
+
+### macOS / Linux
+
+```bash
+curl http://localhost:8000/health
+```
+
+Expected response shape:
+
+```json
+{
+  "status": "healthy",
+  "service": "E-Commerce Intelligence Platform",
+  "version": "..."
+}
+```
+
+If the command fails, confirm that the virtual environment is active, dependencies are installed, and port `8000` is not already in use.
+
 ---
 
 # 📁 Project Structure
