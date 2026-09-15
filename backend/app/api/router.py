@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
-from ..models.database import get_db, Order, Product, Customer
+from ..models.database import get_db, Order, OrderItem
 from ..services.data_service import AnalyticsDataService
 import io
 import csv
@@ -75,6 +75,8 @@ def get_orders(
     query = db.query(Order)
     if status and status != "All":
         query = query.filter(Order.status == status)
+    if category and category != "All":
+        query = query.join(OrderItem, OrderItem.order_id == Order.id).filter(OrderItem.category == category).distinct()
     if search:
         search_fmt = f"%{search}%"
         query = query.filter(
@@ -82,10 +84,10 @@ def get_orders(
             (Order.customer_name.ilike(search_fmt)) |
             (Order.country.ilike(search_fmt))
         )
-    
+
     total = query.count()
     orders = query.order_by(Order.date.desc()).offset((page - 1) * limit).limit(limit).all()
-    
+
     return {
         "total": total,
         "page": page,
@@ -119,10 +121,10 @@ def export_orders_csv(db: Session = Depends(get_db)):
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow(["Order ID", "Customer Name", "Country", "Date", "Total Amount ($)", "Profit ($)", "Channel", "Payment Method", "Status"])
-    
+
     for o in orders:
         writer.writerow([o.id, o.customer_name, o.country, o.date, o.total_amount, o.profit, o.channel, o.payment_method, o.status])
-    
+
     return Response(
         content=output.getvalue(),
         media_type="text/csv",
